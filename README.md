@@ -7,4 +7,5 @@
 4. `pip install tensorFlow`
 5. `pip install keras==1.2.2`
 6. `pip install sklearn`
-7. Run the prediction `python predictor.py <SOUND_FILE>.wav`
+7. `pip install h5py`
+8. Run the prediction `python predictor.py <SOUND_FILE>.wav`
