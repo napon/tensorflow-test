@@ -41,11 +41,26 @@ def one_hot_encode(labels):
 parent_dir = 'audio'
 tr_sub_dirs = ["testfold1"]
 ts_sub_dirs = ["testfold2"]
-tr_features, tr_labels = parse_audio_files(parent_dir,tr_sub_dirs)
-ts_features, ts_labels = parse_audio_files(parent_dir,ts_sub_dirs)
+tr_features = None
+tr_labels = None
+ts_features = None
+ts_labels = None
 
-tr_labels = one_hot_encode(tr_labels)
-ts_labels = one_hot_encode(ts_labels)
+if not os.path.exists('tr_features.npy'):
+    tr_features, tr_labels = parse_audio_files(parent_dir,tr_sub_dirs)
+    ts_features, ts_labels = parse_audio_files(parent_dir,ts_sub_dirs)
+    tr_labels = one_hot_encode(tr_labels)
+    ts_labels = one_hot_encode(ts_labels)
+
+    np.save('tr_features.npy', tr_features)
+    np.save('tr_labels.npy', tr_labels)
+    np.save('ts_features.npy', ts_features)
+    np.save('ts_labels.npy', ts_labels)
+else:
+    tr_features = np.load('tr_features.npy')
+    tr_labels = np.load('tr_labels.npy')
+    ts_features = np.load('ts_features.npy')
+    ts_labels = np.load('ts_labels.npy')
 
 training_epochs = 50
 n_dim = tr_features.shape[1]
