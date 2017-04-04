@@ -17,25 +17,6 @@ from keras.utils import np_utils
 from keras.regularizers import l2, activity_l2
 
 
-#####################
-
-sound_names = ["air conditioner","car horn","children playing","dog bark","drilling","engine idling", "gun shot","jackhammer","siren","street music"]
-PRETRAINED_MODEL_PATH = 'salamon-cnn-model.h5'
-
-model = build_model()
-model.load_weights(PRETRAINED_MODEL_PATH)
-predictions = model.predict(extract_features_array(str(sys.argv[1])))
-
-if len(predictions) == 0:
-    print "No prediction"
-else:
-    ind = np.argpartition(predictions[0], -2)[-2:]
-    ind[np.argsort(predictions[0][ind])]
-    ind = ind[::-1]
-    print "PREDICTION: ", sound_names[ind[0]]
-
-#####################
-
 '''
 Credits: 
 - https://serv.cusp.nyu.edu/projects/urbansounddataset/
@@ -118,3 +99,22 @@ def build_model():
     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer="adamax")
     
     return model
+
+#####################
+
+sound_names = ["air conditioner","car horn","children playing","dog bark","drilling","engine idling", "gun shot","jackhammer","siren","street music"]
+PRETRAINED_MODEL_PATH = 'salamon-cnn-model.h5'
+
+model = build_model()
+model.load_weights(PRETRAINED_MODEL_PATH)
+predictions = model.predict(extract_features_array(str(sys.argv[1])))
+
+if len(predictions) == 0:
+    print "No prediction"
+else:
+    ind = np.argpartition(predictions[0], -2)[-2:]
+    ind[np.argsort(predictions[0][ind])]
+    ind = ind[::-1]
+    print "PREDICTION: ", sound_names[ind[0]]
+
+#####################
