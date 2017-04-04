@@ -5,6 +5,6 @@
 2. `virtualenv --system-site-packages ~/tensorFlow`
 3. `source ~/tensorflow/bin/activate`
 4. `pip install tensorFlow`
-5. `pip install librosa`
-If you get an error here on MacOSX, make sure you do `xcode-select --install`
-6. Run the training `python app.py`
+5. `pip install keras==1.2.2`
+6. `pip install sklearn`
+7. Run the prediction `python predictor.py <SOUND_FILE>.wav`
