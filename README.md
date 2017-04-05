@@ -4,8 +4,6 @@
 1. `mkdir ~/tensorFlow && cd ~/tensorFlow`
 2. `virtualenv --system-site-packages ~/tensorFlow`
 3. `source ~/tensorflow/bin/activate`
-4. `pip install tensorFlow`
-5. `pip install keras==1.2.2`
-6. `pip install sklearn`
-7. `pip install h5py`
-8. Run the prediction `python predictor.py <SOUND_FILE>.wav`
+4. Clone and cd into the repo
+5. `pip install -r requirements.txt`
+6. Run the prediction `python predictor.py <SOUND_FILE>.wav`
