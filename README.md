@@ -8,3 +8,4 @@
 5. `pip install keras==1.2.2`
 6. `pip install sklearn`
 7. Run the prediction `python predictor.py <SOUND_FILE>.wav`
+8. Generate pb file `python convert.py`
