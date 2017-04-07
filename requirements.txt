@@ -1,0 +1,4 @@
+tensorflow
+keras==1.2.2
+sklearn
+h5py
