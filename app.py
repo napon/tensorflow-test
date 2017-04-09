@@ -1,34 +1,43 @@
-#import recorder
-import predictor
-#from multiprocessing import Pool as ThreadPool
+import recorder
 from multiprocessing.dummy import Pool as ThreadPool 
+import requests
+import wave
+from StringIO import StringIO
 
 SOUND_CARD = 'hw:1,0'
-DURATION_IN_SECONDS = 5
-PRETRAINED_MODEL_PATH = 'salamon-cnn-model.h5'
-THREAD_POOL_SIZE = 5
+DURATION_IN_SECONDS = 10 
+THREAD_POOL_SIZE = 2 
+SERVER_URL = 'http://172.25.96.198:5000'
 
 def run():
-	#inp = recorder.create_input(SOUND_CARD)
-	model, graph = predictor.setup_model(PRETRAINED_MODEL_PATH)
+	inp, frame_rate = recorder.create_input(SOUND_CARD)
+	buffers = []
 	
-	files = ['7061-6-0-0.wav', '9031-3-1-0.wav', '14113-4-0-0.wav', '21684-9-0-7.wav', '31323-3-0-2.wav', '40722-8-0-1.wav', '46669-4-0-9.wav', '50901-0-1-0.wav', '69304-9-0-15.wav', '97317-2-0-25.wav', '103074-7-3-1.wav', '175845-1-0-0.wav', '184355-1-0-0.wav']
-	soundfiles = []	
-	for name in files:
-		sound_filename = 'audio/testfold1/' + name
+	while 1:	
 		# Record sound clips of specified duration
-		#buffer = recorder.record(inp, DURATION_IN_SECONDS)
-		# Create .wav file
-		#sound_filename = recorder.create_soundfile(buffer)	
-		soundfiles.append(sound_filename)
-		if len(soundfiles) % THREAD_POOL_SIZE == 0:
+		buffer = recorder.record(inp, DURATION_IN_SECONDS * frame_rate)
+		buffers.append(buffer)
+		if len(buffers) % THREAD_POOL_SIZE == 0:
 			pool = ThreadPool(THREAD_POOL_SIZE)
-			args = []
-			for file in soundfiles:
-				args.append((graph, model, file))
-			pool.map(predictor.predict, args)
+			pool.map(send_buffer, buffers)
 			soundfiles = []
 		
+
+def send_buffer(buffer):
+	CHANNELS = 1
+	SAMPWIDTH = 2
+	FRAME_RATE = 44100
+	WRITE_MODE = 'wb'	
+	stream = StringIO()
+	f = wave.open(stream, WRITE_MODE)
+	f.setnchannels(CHANNELS)
+	f.setsampwidth(SAMPWIDTH)
+	f.setframerate(FRAME_RATE)
+	f.writeframes(''.join(buffer))
+	f.close()
+	
+	requests.post(url=SERVER_URL, files={'file': stream})
+
 
 if __name__ == "__main__":
 	run()

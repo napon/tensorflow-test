@@ -1,6 +1,7 @@
 import alsaaudio
 import wave 
 import datetime
+from StringIO import StringIO
 
 def create_input(sound_card):
         inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK, sound_card)
@@ -14,31 +15,30 @@ def create_input(sound_card):
         inp.setformat(FORMAT)
         inp.setperiodsize(PERIOD) 
         
-        return inp
+        return inp, FRAME_RATE
 
 def record(inp, duration):
         buffer = []
 
-        for i in range(duration**FRAME_RATE):
+        for i in range(duration):
                 l, data = inp.read()
          
                 if l: 
                         buffer.append(data)
+	return buffer
 
 def create_soundfile(buffer):
-        now = datetime.datetime.now()
-        timestamp_str = now.strftime('%y%m%d-%H%M%S')
-        name = timestamp_str + '.wav'
+	#n = datetime.datetime.now().strftime('%y%m%d-%H%M%S') + '.wav'
         WRITE_MODE = 'wb'
-        CHANNELS = 1
+        CHANNELS = 1 
         SAMPWIDTH = 2
-        FRAME_RATE = 16000      
-        f = wave.open(name, WRITE_MODE)
+        FRAME_RATE = 44100     
+	stream = StringIO()
+	f = wave.open(stream, WRITE_MODE)
         f.setnchannels(CHANNELS)
         f.setsampwidth(SAMPWIDTH)
         f.setframerate(FRAME_RATE)
         f.writeframes(''.join(buffer))
         f.close()
 
-        return name     
-
+	return stream 
