@@ -6,4 +6,4 @@
 3. `source ~/tensorflow/bin/activate`
 4. Clone and cd into the repo
 5. `pip install -r requirements.txt`
-6. Run the prediction `python predictor.py <SOUND_FILE>.wav`
+6. `python app.py`
