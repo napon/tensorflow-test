@@ -101,20 +101,27 @@ def build_model():
     return model
 
 #####################
-
 sound_names = ["air conditioner","car horn","children playing","dog bark","drilling","engine idling", "gun shot","jackhammer","siren","street music"]
-PRETRAINED_MODEL_PATH = 'salamon-cnn-model.h5'
 
-model = build_model()
-model.load_weights(PRETRAINED_MODEL_PATH)
-predictions = model.predict(extract_features_array(str(sys.argv[1])))
+def setup_model(pretrained_model):
+	model = build_model()
+	model.load_weights(pretrained_model)
+	return model, tf.get_default_graph()
 
-if len(predictions) == 0:
-    print "No prediction"
-else:
-    ind = np.argpartition(predictions[0], -2)[-2:]
-    ind[np.argsort(predictions[0][ind])]
-    ind = ind[::-1]
-    print "PREDICTION: ", sound_names[ind[0]]
+def predict_unwrapped(graph, model, filename):
+	features = extract_features_array(filename)
+	# https://www.tensorflow.org/versions/r0.11/api_docs/python/framework/utility_functions#get_default_graph
+	with graph.as_default():
+		predictions = model.predict(features)
 
+	if len(predictions) == 0:
+	    print "No prediction"
+	else:
+	    ind = np.argpartition(predictions[0], -2)[-2:]
+	    ind[np.argsort(predictions[0][ind])]
+	    ind = ind[::-1]
+	    print "PREDICTION: ", sound_names[ind[0]]
+
+def predict(args):
+	predict_unwrapped(*args)
 #####################
